@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seminar Suite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('homebg.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            text-align: center;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('homebg.jpg') no-repeat center center/cover;
+            filter: blur(4px); 
+            z-index: -1;
+        }
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(97, 28, 28, 0.89);
+            padding: 10px 20px;
+            flex-wrap: wrap; /* Ensures responsiveness */
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Navbar Right Section */
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Search Bar */
+        .search-bar input {
+            padding: 8px;
+            width: 250px;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+        }
+
+        /* Login Button */
+        .login-btn {
+            background: #ff5733;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #e64a19;
+        }
+
+        .page-btn {
+            background: rgb(250, 248, 248,0.4);
+            color: rgb(0, 0, 0);
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 25px;
+            transition: background 0.3s;
+        }
+
+        /* Icons Section */
+        .icons-container {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            padding: 15px;
+        }
+
+        .icon {
+            text-align: center;
+            font-size: 20px;
+            color: black;
+            font-weight: bold;
+        }
+
+        .icon i {
+            font-size: 40px;
+            color: #ff5733;
+            transition: transform 0.3s;
+        }
+
+        .icon i:hover {
+            transform: scale(1.1);
+        }
+        .container {
+            padding: 20px;
+        }
+
+        .search-box {
+            background: lightgray;
+            padding: 15px;
+            display: inline-block;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            padding: 8px;
+            width: 200px;
+        }
+
+        .search-box button {
+            padding: 8px 15px;
+            background: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .products {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .halls {
+            background: white;
+            padding: 15px;
+            width: 280px;
+            height:320px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .halls img {
+            width: 100%;
+            border-radius: 10px;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .halls h3 {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .halls p {
+            font-size: 14px;
+            color: gray;
+        }
+
+        .price {
+            font-size: 16px;
+            color: blue;
+            font-weight: bold;
+        }
+
+        .halls button {
+            padding: 10px;
+            background: rgba(97, 28, 28, 0.89);
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        function searchHalls() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let halls = document.querySelectorAll('.halls');
+    
+            halls.forEach(hall => {
+                let hallName = hall.querySelector('h3').textContent.toLowerCase();
+                if (hallName.includes(input)) {
+                    hall.style.display = "block";
+                } else {
+                    hall.style.display = "none";
+                }
+            });
+        }
+    </script>
+    
+    
+    <div class="container">
+        <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">Seminar Booking</div>
+        <div class="navbar-right">
+            <div class="search-bar">
+                <input type="text" id="searchInput" onkeyup="searchHalls()" placeholder="Search for seminars...">
+            </div>           
+            <button class="login-btn" th:if="${isLoggedIn}" onclick="location.href='/logout'">Logout</button>
+            <button class="login-btn" th:unless="${isLoggedIn}" onclick="location.href='/login'">Login / Sign Up</button>
+
+        </div>
+    </div>
+
+    <!-- Home Page Icons -->
+    <div class="icons-container">
+        <form name="myForm" method="get" action="/"></form>
+        <div class="icon">
+            <i class="fas fa-building"></i>
+            <button class="page-btn"><b>Home</b></button>
+        </div>
+        </form>
+        <form name="myForm" method="get" action="/event">
+        <div class="icon">
+            <i class="fas fa-calendar-alt"></i>
+            <button type="submit" class="page-btn"><b>Events</b></button>
+        </div>
+        </form>
+        <form name="myForm" method="get" th:action="${isLoggedIn} ? '/mybooking' : '/bookings'">
+            <div class="icon">
+                <i class="fas fa-ticket-alt"></i>
+                <button type="submit" class="page-btn">
+                    <b th:text="${isLoggedIn} ? 'My Bookings' : 'Bookings'">Bookings</b>
+                </button>
+            </div>
+        </form>        
+    </div>
+        <div class="products">
+            <form name="myForm" method="get" action="/apj">
+            <div class="halls">
+                <img src="apjimg.jpg" alt="APJ Seminar Hall">
+                <h3>APJ Seminar Hall</h3>
+                <button type="submit">View More !!</button>
+            </div>
+            </form>
+            <form name="myForm" method="get" action="/sapphire">
+            <div class="halls">
+                <img src="sapphireimg.jpg" alt="Sapphire Seminar Hall">
+                <h3>Sapphire Seminar Hall</h3>
+                <button type="submit">View More !!</button>
+            </div>
+            </form>
+            <form name="myForm" method="get" action="/smb">
+            <div class="halls">
+                <img src="smbimg.jpg" alt="SMB-402">
+                <h3>SMB Seminar Hall</h3>
+                <button type="submit">View More !!</button>
+            </div>
+            </form>
+            <form name="myForm" method="get" action="/db">
+            <div class="halls">
+                <img src="dbimg.jpg" alt="DB Seminar Hall">
+                <h3>DB Seminar Hall</h3>
+                <button type="submit">View More !!</button>
+            </div>
+            </form>
+        </div>
+    </div>
+    
+
+</body>
+</html>

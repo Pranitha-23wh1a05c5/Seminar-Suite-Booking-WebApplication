@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Diamond Block Seminar Hall</title>
+    <style>
+        /* EXISTING STYLES UNCHANGED */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('homebg.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('homebg.jpg') no-repeat center center/cover;
+            filter: blur(2px); 
+            z-index: -1;
+        }
+        .heading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin: 30px auto 10px;
+            width: 100%;
+        }
+        .heading h1 {
+            background-color: white;
+            padding: 10px 40px;
+            font-size: 36px;
+            font-weight: bold;
+            color: #611c1c;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        .main-container {
+            display: flex;
+            height: calc(100vh - 150px);
+        }
+        .left-half, .right-half {
+            width: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .slider {
+            position: relative;
+            width: 35vw;
+            height: 45vh;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        .slides {
+            display: flex;
+            width: calc(35vw * 4);
+            transition: transform 0.5s ease-in-out;
+        }
+        .slides img {
+            width: 35vw;
+            height: 45vh;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.8);
+            color: #611c1c;
+            border: none;
+            padding: 8px 12px;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 50%;
+            z-index: 10;
+            display: none;
+        }
+        .arrow.show {
+            display: block;
+        }
+        .arrow.left {
+            left: 10px;
+        }
+        .arrow.right {
+            right: 10px;
+        }
+        .info-container {
+            background-color: rgba(255, 255, 255, 0.85);
+            width: 35vw;
+            padding: 25px 30px;
+            border-radius: 20px;
+            text-align: left;
+            box-shadow: 0 0 15px rgba(0,0,0,0.15);
+        }
+        .info-container h2 {
+            color: #611c1c;
+            margin-top: 10px;
+            border-bottom: 2px solid #611c1c;
+            padding-bottom: 5px;
+        }
+        .info-container p {
+            font-size: 16px;
+            color: #222;
+            margin: 10px 0;
+        }
+        .info-container p span {
+            font-weight: bold;
+            color: #611c1c;
+        }
+        .info-container button {
+            background-color: #611c1c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .info-container button:hover {
+            background-color: #451010;
+        }
+
+        /* Popup styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            width: 300px;
+        }
+        .popup input {
+            margin: 10px 0;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .popup button {
+            background-color: #611c1c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            width: 100%;
+        }
+        .popup button:hover {
+            background-color: #451010;
+        }
+        .popup button.grey {
+            background-color: grey;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="heading">
+        <h1>SMB Block Seminar Hall</h1>
+    </div>
+
+    <div class="main-container">
+        <!-- Slider -->
+        <div class="left-half">
+            <div class="slider">
+                <div class="slides" id="slides">
+                    <img src="/smbimg.jpg" alt="Slide 1">
+                    <img src="/smbimg1.jpg" alt="Slide 2">
+                    <img src="/smbimg2.jpg" alt="Slide 3">
+                    <img src="/smbimg3.jpg" alt="Slide 4">
+
+                </div>
+                <button class="arrow left" id="prev" onclick="moveSlide(-1)">&#10094;</button>
+                <button class="arrow right" id="next" onclick="moveSlide(1)">&#10095;</button>
+            </div>
+        </div>
+
+        <!-- Info box -->
+        <div class="right-half">
+            <div class="info-container">
+                <h2>Capacity</h2>
+                <p>👥 <span>200 People</span></p>
+                <h2>Facilities</h2>
+                <p>📽 Projector</p>
+                <p>🎤 Microphones</p>
+                <p>🔊 Speakers</p>
+                <p>🖥 TV Screens</p>
+                <p>🌐 High-Speed WiFi</p>
+
+                <div>
+                    <button th:if="${isLoggedIn}" onclick="openPopup()">Book Now</button>
+                    <button th:unless="${isLoggedIn}" onclick="window.location.href='/login'">Book Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Popup Form -->
+    <div id="popupForm" class="popup">
+        <form id="bookingForm">
+            <input type="text" name="eventName" placeholder="Event Name" required />
+            <input type="date" name="eventDate" required />
+            <input type="time" name="eventTime" required />
+            <input type="time" name="endTime" required />
+            <input type="hidden" name="hallName" value="SMB Seminar hall" />
+            <input type="hidden" name="venue" value="SMB block 4th floor" />
+            <button type="submit" class="button">Submit Booking</button>
+            <button type="button" onclick="closePopup()" class="button" style="background: grey">Close</button>
+        </form>
+        <div id="bookingStatus"></div>
+    </div>
+
+    <script>
+        let currentIndex = 0;
+        const slides = document.getElementById("slides");
+        const totalSlides = slides.children.length;
+        const prevBtn = document.getElementById("prev");
+        const nextBtn = document.getElementById("next");
+
+        function updateArrows() {
+            prevBtn.classList.toggle('show', currentIndex > 0);
+            nextBtn.classList.toggle('show', currentIndex < totalSlides - 1);
+        }
+
+        function moveSlide(direction) {
+            if ((direction === -1 && currentIndex === 0) || (direction === 1 && currentIndex === totalSlides - 1)) return;
+
+            currentIndex += direction;
+            slides.style.transform = `translateX(-${currentIndex * 35}vw)`;
+            updateArrows();
+        }
+
+        updateArrows();
+
+        function openPopup() {
+            document.getElementById("popupForm").style.display = "block";
+        }
+
+        function closePopup() {
+            document.getElementById("popupForm").style.display = "none";
+            document.getElementById("bookingStatus").innerText = "";
+        }
+
+        document.getElementById("bookingForm").onsubmit = async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const response = await fetch("/bookHall", {
+                method: "POST",
+                body: formData
+            });
+            const result = await response.text();
+            document.getElementById("bookingStatus").innerText = result;
+
+            if (result.includes("✅")) {
+                setTimeout(() => {
+                    closePopup();
+                }, 2000);
+            }
+        };
+    </script>
+</body>
+</html>

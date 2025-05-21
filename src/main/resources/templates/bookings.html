@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Bookings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('homebg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 900px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        h2 {
+            color: #611c1c;
+        }
+        .booking {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📋 All Bookings</h2>
+
+        <div th:if="${bookings != null && bookings.size() > 0}">
+            <div class="booking" th:each="booking : ${bookings}">
+                <p><strong>📧 User:</strong>
+                    <span th:text="${booking.user != null && booking.user.email != null ? booking.user.email : 'Unknown'}"></span>
+                </p>                  
+                <p><strong>🎉 Event:</strong> <span th:text="${booking.eventName}"></span></p>
+                <p><strong>🏛️ Hall:</strong> <span th:text="${booking.hallName}"></span></p>
+                <p><strong>📅 Date:</strong> <span th:text="${booking.date}"></span></p>
+                <p><strong>🕒 Time:</strong> <span th:text="${booking.time}"></span> to <span th:text="${booking.endTime}"></span></p>
+                <p><strong>📍 Venue:</strong> <span th:text="${booking.venue}"></span></p>
+            </div>
+        </div>
+
+        <div th:if="${bookings == null || bookings.size() == 0}">
+            <p>No bookings found. 😶‍🌫️</p>
+        </div>
+    </div>
+</body>
+</html>
