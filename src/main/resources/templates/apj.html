@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Diamond Block Seminar Hall</title>
+    <title>APJ Block Seminar Hall</title>
     <style>
         /* EXISTING STYLES UNCHANGED */
         body {
@@ -166,6 +166,22 @@
         .popup button.grey {
             background-color: grey;
         }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #611c1c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #451010;
+        }
+
     </style>
 </head>
 <body>
@@ -173,6 +189,23 @@
     <div class="heading">
         <h1>APJ Block Seminar Hall</h1>
     </div>
+
+    <div style="position: absolute; top: 20px; left: 20px; z-index: 1000;">
+        <button onclick="goBack()" style="padding: 8px 16px; background-color: #611c1c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            ← Back
+        </button>
+    </div>
+
+    <script>
+        function goBack() {
+            if (document.referrer !== "") {
+                window.history.back(); // 🌀 Takes you to previous page
+            } else {
+                window.location.href = "/"; // 🏡 Fallback to home page
+            }
+        }
+    </script>
+
 
     <div class="main-container">
         <!-- Slider -->

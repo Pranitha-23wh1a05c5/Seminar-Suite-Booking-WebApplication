@@ -232,7 +232,7 @@
             <button type="submit" class="page-btn"><b>Events</b></button>
         </div>
         </form>
-        <form name="myForm" method="get" th:action="${isLoggedIn} ? '/mybooking' : '/bookings'">
+        <form name="myForm" method="get" th:action="@{${isLoggedIn} ? '/mybooking' : '/bookings'}">
             <div class="icon">
                 <i class="fas fa-ticket-alt"></i>
                 <button type="submit" class="page-btn">

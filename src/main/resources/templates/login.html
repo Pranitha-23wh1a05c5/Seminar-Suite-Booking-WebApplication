@@ -68,6 +68,21 @@
                 }
             }
         </script>
+        <div style="position: absolute; top: 20px; left: 20px; z-index: 1000;">
+        <button onclick="goBack()" style="padding: 8px 16px; background-color: #611c1c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            ← Back
+        </button>
+    </div>
+
+    <script>
+        function goBack() {
+            if (document.referrer !== "") {
+                window.history.back(); // 🌀 Takes you to previous page
+            } else {
+                window.location.href = "/"; // 🏡 Fallback to home page
+            }
+        }
+    </script>
     </head>
     <body>
         <center>

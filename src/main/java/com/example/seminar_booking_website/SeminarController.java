@@ -2,13 +2,17 @@ package com.example.seminar_booking_website;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 import org.springframework.ui.Model;
 
@@ -58,6 +62,7 @@ public class SeminarController {
     }
 
     if (user.getPassword() == null || user.getPassword().isEmpty()) {
+
         // First-time password set 🚀
         user.setPassword(password);
         userRepository.save(user);
@@ -143,32 +148,78 @@ public class SeminarController {
                         @RequestParam String venue,
                         HttpSession session) {
 
-    LocalDate date = LocalDate.parse(eventDate);
-    LocalTime start = LocalTime.parse(eventTime);
-    LocalTime end  = LocalTime.parse(endTime);
+        LocalDate date = LocalDate.parse(eventDate);
+        LocalTime start = LocalTime.parse(eventTime);
+        LocalTime end = LocalTime.parse(endTime);
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
 
-        User user=(User) session.getAttribute("user");
-        if(user==null) return "login";
-
-    List<Booking> existingBookings = bookingRepository.findByHallNameAndDate(hallName, date);
-    for (Booking booking : existingBookings) {
-        if (start.isBefore(booking.getEndTime()) && end.isAfter(booking.getTime())) {
-            return "❌ Time slot overlaps with an existing booking!";
+        if (date.isBefore(today)) {
+            return "❌ Booking not possible for past dates!";
         }
-    }
 
 
-    Booking b = new Booking();
-    b.setEventName(eventName);
-    b.setHallName(hallName);
-    b.setVenue(venue);
-    b.setDate(date);
-    b.setTime(start); // set start time
-    b.setEndTime(end); // set end time
-    b.setUser(user);  // store user's email
-    bookingRepository.save(b);
+        if (date.equals(today) && start.isBefore(now)) {
+            return "❌ You can't book an event in the past! Try a future time.";
+        }
 
-    return "✅ Booking Confirmed!";
+        User user = (User) session.getAttribute("user");
+        if (user == null) return "login";
+
+        //catch bookings from previous nightdate.plusDays(1) //catch spillover events into the next day
+        List<Booking> existingBookings = bookingRepository.findByHallNameAndDateBetween(hallName,date.minusDays(1),date.plusDays(1));
+
+        for (Booking booking : existingBookings) {
+            boolean exactDuplicate = booking.getDate().equals(date) &&
+                                    booking.getTime().equals(start) &&
+                                    booking.getEndTime().equals(end) &&
+                                    booking.getHallName().equalsIgnoreCase(hallName) &&
+                                    booking.getVenue().equalsIgnoreCase(venue);
+                                    
+            if (exactDuplicate) {
+                return "❌ This slot is already booked for this hall! Please choose a different time.";
+            }
+        }
+
+        for (Booking booking : existingBookings) {
+            LocalDate bookingDate = booking.getDate();
+            LocalTime startTime = booking.getTime();
+            LocalTime bookingendTime = booking.getEndTime();
+
+            LocalDateTime existingStartDT = LocalDateTime.of(bookingDate, startTime);
+
+            // ✨ Here's the trick:
+            LocalDate endDate = bookingendTime.isBefore(startTime) ? bookingDate.plusDays(1) : bookingDate;
+            LocalDateTime existingEndDT = LocalDateTime.of(endDate, bookingendTime);
+
+            LocalDateTime bufferStartDT = existingStartDT.minusHours(1);
+            LocalDateTime bufferEndDT = existingEndDT.plusHours(1);
+
+            LocalDateTime requestStartDT = LocalDateTime.of(date, start);
+            LocalDateTime requestEndDT = LocalDateTime.of(date, end);
+
+            // if the event crosses midnight
+            if (end.isBefore(start)) {
+                requestEndDT = requestEndDT.plusDays(1);
+            }
+
+            boolean overlaps = requestStartDT.isBefore(bufferEndDT) && requestEndDT.isAfter(bufferStartDT);
+            if (overlaps) {
+                return "❌ This hall is blocked due to another event from " + booking.getTime() + " to " + booking.getEndTime()
+                    + ". You can't book within 1 hour before or after it.";
+            }
+        }
+
+        Booking b = new Booking();
+        b.setEventName(eventName);
+        b.setHallName(hallName);
+        b.setVenue(venue);
+        b.setDate(date);
+        b.setTime(start);
+        b.setEndTime(end);
+        b.setUser(user);
+        bookingRepository.save(b);
+        return "✅ Booking Confirmed!";
     }
 
     @GetMapping("/mybooking")
@@ -185,16 +236,16 @@ public class SeminarController {
     }
 
     @PostMapping("/deleteBooking")
-    public String deleteBooking(@RequestParam Long id, HttpSession session) {
+    public ResponseEntity<?> deleteBooking(@RequestParam Long id, HttpSession session) {
     User user = (User) session.getAttribute("user");
     if (user == null) {
-        return "redirect:/login";
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
     }
     Booking booking = bookingRepository.findById(id).orElse(null);
     if (booking != null && booking.getUser().getId().equals(user.getId())) {
         bookingRepository.delete(booking);
     }
-    return "redirect:/mybooking"; // refresh the page after deletion
+    return ResponseEntity.ok("Booking deleted"); 
     }
 
     @GetMapping("/bookings")
@@ -204,8 +255,6 @@ public class SeminarController {
     model.addAttribute("bookings", bookings);
     return "bookings";  // 👈 Make sure this matches your new HTML file name
     }
-
-
 
     // add more if you have more HTML files
 }
