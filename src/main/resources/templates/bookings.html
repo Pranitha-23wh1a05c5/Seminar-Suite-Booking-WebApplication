@@ -44,31 +44,53 @@
         .back-button:hover {
             background-color: #451010;
         }
+        select, input[type="date"] {
+            border: 1px solid #aaa;
+            background-color: white;
+            font-size: 14px;
+            color: #333;
+        }
+        select:focus, input[type="date"]:focus {
+            outline: none;
+            box-shadow: 0 0 5px #611c1c99;
+            border-color: #611c1c;
+        }
     </style>
 </head>
 <body>
-    
+
+    <!-- Back Button -->
     <div style="position: absolute; top: 20px; left: 20px; z-index: 1000;">
         <button onclick="goBack()" style="padding: 8px 16px; background-color: #611c1c; color: white; border: none; border-radius: 5px; cursor: pointer;">
             ← Back
         </button>
     </div>
 
-    <script>
-        function goBack() {
-            if (document.referrer !== "") {
-                window.history.back(); // 🌀 Takes you to previous page
-            } else {
-                window.location.href = "/"; // 🏡 Fallback to home page
-            }
-        }
-    </script>
-
+    <!-- Main Container -->
     <div class="container">
+        <!-- Page Heading -->
         <h2>📋 All Bookings</h2>
 
+        <!-- Filters -->
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; gap: 10px;">
+            <select id="hallFilter" onchange="applyFilters()" style="padding: 8px; border-radius: 5px; width: 200px;">
+                <option value="">🔍 Filter by Hall</option>
+                <option th:each="hall : ${hallNames}" th:value="${hall}" th:text="${hall}"></option>
+            </select>
+
+            <input type="date" id="dateFilter" onchange="applyFilters()" style="padding: 8px; border-radius: 5px; width: 180px;" />
+
+            <button onclick="clearFilters()" style="padding: 8px 12px; border-radius: 5px; background-color: #999; color: white; border: none; cursor: pointer;">
+                ❌ Clear Filters
+            </button>
+        </div>
+
+        <!-- Booking Entries -->
         <div th:if="${bookings != null && bookings.size() > 0}">
-            <div class="booking" th:each="booking : ${bookings}">
+            <div class="booking" 
+                 th:each="booking : ${bookings}" 
+                 th:attr="data-hall=${booking.hallName.toLowerCase()}, data-date=${booking.date}">
+                 
                 <p><strong>📧 User:</strong>
                     <span th:text="${booking.user != null && booking.user.email != null ? booking.user.email : 'Unknown'}"></span>
                 </p>                  
@@ -80,10 +102,43 @@
             </div>
         </div>
 
+        <!-- No Bookings Message -->
         <div th:if="${bookings == null || bookings.size() == 0}">
             <p>No bookings found. 😶‍🌫️</p>
         </div>
     </div>
+
+    <!-- Scripts -->
+    <script>
+        function goBack() {
+            if (document.referrer !== "") {
+                window.history.back();
+            } else {
+                window.location.href = "/";
+            }
+        }
+
+        function applyFilters() {
+            const selectedHall = document.getElementById("hallFilter").value.toLowerCase();
+            const selectedDate = document.getElementById("dateFilter").value;
+
+            document.querySelectorAll(".booking").forEach((booking) => {
+                const hall = booking.dataset.hall;
+                const date = booking.dataset.date;
+
+                const hallMatch = !selectedHall || hall === selectedHall;
+                const dateMatch = !selectedDate || date === selectedDate;
+
+                booking.style.display = (hallMatch && dateMatch) ? "block" : "none";
+            });
+        }
+
+        function clearFilters() {
+            document.getElementById("hallFilter").value = "";
+            document.getElementById("dateFilter").value = "";
+            applyFilters();
+        }
+    </script>
 
 </body>
 </html>

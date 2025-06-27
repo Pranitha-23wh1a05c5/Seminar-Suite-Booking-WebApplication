@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>SMB Block Seminar Hall</title>
+    <title>Sapphire Block Lab</title>
     <style>
         /* EXISTING STYLES UNCHANGED */
         body {
@@ -186,7 +186,7 @@
 <body>
 
     <div class="heading">
-        <h1>SMB Block Seminar Hall</h1>
+        <h1>Sapphire Block Lab</h1>
     </div>
 
        <div style="position: absolute; top: 20px; left: 20px; z-index: 1000;">
@@ -210,11 +210,10 @@
         <div class="left-half">
             <div class="slider">
                 <div class="slides" id="slides">
-                    <img src="/smbimg.jpg" alt="Slide 1">
-                    <img src="/smbimg1.jpg" alt="Slide 2">
-                    <img src="/smbimg2.jpg" alt="Slide 3">
-                    <img src="/smbimg3.jpg" alt="Slide 4">
-
+                    <img src="/ssh1.jpg" alt="Slide 1">
+                    <img src="/ssh2.jpg" alt="Slide 2">
+                    <img src="/ssh3.jpg" alt="Slide 3">
+                    <img src="/ssh4.jpg" alt="Slide 4">
                 </div>
                 <button class="arrow left" id="prev" onclick="moveSlide(-1)">&#10094;</button>
                 <button class="arrow right" id="next" onclick="moveSlide(1)">&#10095;</button>
@@ -225,12 +224,12 @@
         <div class="right-half">
             <div class="info-container">
                 <h2>Capacity</h2>
-                <p>👥 <span>200 People</span></p>
+                <p>👥 <span>70 People</span></p>
                 <h2>Facilities</h2>
                 <p>📽 Projector</p>
                 <p>🎤 Microphones</p>
                 <p>🔊 Speakers</p>
-                <p>🖥 TV Screens</p>
+                <p>💻 Computers</p>
                 <p>🌐 High-Speed WiFi</p>
 
                 <div>
@@ -248,8 +247,8 @@
             <input type="date" name="eventDate" required />
             <input type="time" name="eventTime" required />
             <input type="time" name="endTime" required />
-            <input type="hidden" name="hallName" value="SMB Seminar hall" />
-            <input type="hidden" name="venue" value="SMB block 4th floor" />
+            <input type="hidden" name="hallName" value="Sapphire Block Lab" />
+            <input type="hidden" name="venue" value="Sapphire block 2nd floor" />
             <button type="submit" class="button">Submit Booking</button>
             <button type="button" onclick="closePopup()" class="button" style="background: grey">Close</button>
         </form>
@@ -304,5 +303,6 @@
             }
         };
     </script>
+
 </body>
 </html>

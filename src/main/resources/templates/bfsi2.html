@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>SMB Block Seminar Hall</title>
+    <title>BFSI Hall 2</title>
     <style>
         /* EXISTING STYLES UNCHANGED */
         body {
@@ -12,7 +12,7 @@
             background: url('homebg.jpg') no-repeat center center fixed;
             background-size: cover;
         }
-        body::before {
+        body::before {                                                                      
             content: "";
             position: fixed;
             top: 0;
@@ -60,7 +60,7 @@
         }
         .slides {
             display: flex;
-            width: calc(35vw * 4);
+            width: calc(35vw * 5);
             transition: transform 0.5s ease-in-out;
         }
         .slides img {
@@ -180,16 +180,16 @@
         }
         .back-button:hover {
             background-color: #451010;
-        }
+        } 
     </style>
 </head>
 <body>
 
     <div class="heading">
-        <h1>SMB Block Seminar Hall</h1>
+        <h1>BFSI Hall 2</h1>
     </div>
 
-       <div style="position: absolute; top: 20px; left: 20px; z-index: 1000;">
+    <div style="position: absolute; top: 20px; left: 20px; z-index: 1000;">
         <button onclick="goBack()" style="padding: 8px 16px; background-color: #611c1c; color: white; border: none; border-radius: 5px; cursor: pointer;">
             ← Back
         </button>
@@ -210,11 +210,11 @@
         <div class="left-half">
             <div class="slider">
                 <div class="slides" id="slides">
-                    <img src="/smbimg.jpg" alt="Slide 1">
-                    <img src="/smbimg1.jpg" alt="Slide 2">
-                    <img src="/smbimg2.jpg" alt="Slide 3">
-                    <img src="/smbimg3.jpg" alt="Slide 4">
-
+                    <img src="/dbimg.jpg" alt="Slide 1">
+                    <img src="/dbimg1.jpg" alt="Slide 2">
+                    <img src="/dbimg2.jpg" alt="Slide 3">
+                    <img src="/dbimg3.jpg" alt="Slide 4">
+                    <img src="/dbimg4.jpg" alt="Slide 5">
                 </div>
                 <button class="arrow left" id="prev" onclick="moveSlide(-1)">&#10094;</button>
                 <button class="arrow right" id="next" onclick="moveSlide(1)">&#10095;</button>
@@ -248,8 +248,8 @@
             <input type="date" name="eventDate" required />
             <input type="time" name="eventTime" required />
             <input type="time" name="endTime" required />
-            <input type="hidden" name="hallName" value="SMB Seminar hall" />
-            <input type="hidden" name="venue" value="SMB block 4th floor" />
+            <input type="hidden" name="hallName" value="BFSI Hall 2" />
+            <input type="hidden" name="venue" value="Diamond block 4th floor" />
             <button type="submit" class="button">Submit Booking</button>
             <button type="button" onclick="closePopup()" class="button" style="background: grey">Close</button>
         </form>
@@ -304,5 +304,6 @@
             }
         };
     </script>
+
 </body>
 </html>

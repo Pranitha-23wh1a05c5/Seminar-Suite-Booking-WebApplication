@@ -3,6 +3,8 @@ package com.example.seminar_booking_website;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,10 +122,28 @@ public class SeminarController {
         return "apj"; // loads apj.html
     }
 
+    @GetMapping("/apjlab")
+    public String apjlab(HttpSession session, Model model) {
+        model.addAttribute("isLoggedIn", session.getAttribute("user")!=null);
+        return "apjlab"; // loads apj.html
+    }
+
     @GetMapping("/db")
     public String db(HttpSession session, Model model) {
         model.addAttribute("isLoggedIn", session.getAttribute("user")!=null);
         return "db"; // loads db.html
+    }
+
+    @GetMapping("/bfsi1")
+    public String bfsi1(HttpSession session, Model model) {
+        model.addAttribute("isLoggedIn", session.getAttribute("user")!=null);
+        return "bfsi1"; // loads db.html
+    }
+
+    @GetMapping("/bfsi2")
+    public String bfsi2(HttpSession session, Model model) {
+        model.addAttribute("isLoggedIn", session.getAttribute("user")!=null);
+        return "bfsi2"; // loads db.html
     }
 
     @GetMapping("/sapphire")
@@ -132,11 +152,25 @@ public class SeminarController {
         return "sapphire"; // loads sapphire.html
     }
 
+    @GetMapping("/ssh")
+    public String ssh(HttpSession session, Model model) {
+        model.addAttribute("isLoggedIn", session.getAttribute("user")!=null);
+        return "ssh"; // loads ssh.html
+    }
+
     @GetMapping("/smb")
     public String smb(HttpSession session, Model model) {
         model.addAttribute("isLoggedIn", session.getAttribute("user")!=null);
         return "smb"; // loads smb.html
     }
+
+    @GetMapping("/smbtraining")
+    public String smbtraining(HttpSession session, Model model) {
+        model.addAttribute("isLoggedIn", session.getAttribute("user")!=null);
+        return "smbtraining"; // loads smb.html
+    }
+
+
 
     @PostMapping("/bookHall")
     @ResponseBody
@@ -248,13 +282,29 @@ public class SeminarController {
     return ResponseEntity.ok("Booking deleted"); 
     }
 
-    @GetMapping("/bookings")
+   @GetMapping("/bookings")
     public String viewAllBookings(Model model, HttpSession session) {
-    model.addAttribute("isLoggedIn", session.getAttribute("user") != null);
-    List<Booking> bookings = bookingRepository.findAll();
-    model.addAttribute("bookings", bookings);
-    return "bookings";  // 👈 Make sure this matches your new HTML file name
+        model.addAttribute("isLoggedIn", session.getAttribute("user") != null);
+        List<Booking> bookings = bookingRepository.findAll();
+        model.addAttribute("bookings", bookings);
+
+        List<String> allPossibleHalls = List.of("APJ Seminar Hall", "APJ Block  Lab", "Diamond Seminar Hall", "BFSI Hall 1", "BFSI Hall 2", "Sapphire Seminar Hall", "Sapphire Block Lab", "SMB Seminar Hall", "SMB Training Hall");
+        List<LocalDate> dates = bookings.stream()
+        .map(Booking::getDate)
+        .distinct()
+        .sorted()
+        .collect(Collectors.toList());
+
+        model.addAttribute("hallNames", allPossibleHalls);
+        model.addAttribute("dates", dates);
+
+
+        model.addAttribute("hallNames", allPossibleHalls);
+        model.addAttribute("dates", dates);
+
+        return "bookings";
     }
+
 
     // add more if you have more HTML files
 }
